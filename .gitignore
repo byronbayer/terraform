@@ -1,5 +1,5 @@
 # Local .terraform directories
-.terraform/
+**/.terraform/*
 
 # .tfstate files
 *.tfstate
@@ -29,9 +29,57 @@ override.tf.json
 # Include override files you do wish to add to version control using negated pattern
 # !example_override.tf
 
-# Include tfplan files to ignore the plan output of command: terraform plan -out=tfplan
-# example: *tfplan*
+# Ignore terraform plan output files
+*tfplan*
+*.tfplan
 
 # Ignore CLI configuration files
 .terraformrc
 terraform.rc
+
+# Ignore any .tfvars files that are generated automatically by CI/CD
+**/.auto.tfvars
+
+# SSH Keys
+*.pem
+*.key
+
+# Backup files
+*.bak
+
+# Ignored Terraform files
+*gitignore*.tf
+
+# OS specific files
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# IDE and Editor files
+.idea/
+*.swp
+*.swo
+*~
+.vscode/
+*.code-workspace
+.vs/
+
+# Azure CLI files
+.azure/
+
+# Environment files
+.env
+.env.local
+*.env
+
+# Log files
+*.log
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Azure specific
+*.publishsettings
+*.azurePubxml
