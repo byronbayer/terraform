@@ -34,11 +34,43 @@ module "storage_account_suffix" {
   tags        = {}
 }
 
+module "storage_account_suffix_logs" {
+  source = "./modules/storage-account"
+
+  naming_suffix            = local.naming_convention["suffix"]
+  purpose                  = "logs"
+  location                 = azurerm_resource_group.suffix.location
+  resource_group_name      = azurerm_resource_group.suffix.name
+  account_tier             = "Standard"
+  account_replication_type = "LRS"
+  subnet_id                = azurerm_subnet.private_endpoints.id
+  private_endpoints        = ["blob"]
+  private_dns_zone_ids = {
+    blob = azurerm_private_dns_zone.storage_blob.id
+  }
+  environment = var.environment
+  tags        = {}
+}
+
 module "keyvault_suffix" {
   source = "./modules/keyvault"
 
   naming_suffix       = local.naming_convention["suffix"]
   purpose             = "gen"
+  location            = azurerm_resource_group.suffix.location
+  resource_group_name = azurerm_resource_group.suffix.name
+  tenant_id           = data.azurerm_client_config.current.tenant_id
+  subnet_id           = azurerm_subnet.private_endpoints.id
+  private_dns_zone_id = azurerm_private_dns_zone.keyvault.id
+  environment         = var.environment
+  tags                = {}
+}
+
+module "keyvault_suffix_app" {
+  source = "./modules/keyvault"
+
+  naming_suffix       = local.naming_convention["suffix"]
+  purpose             = "app"
   location            = azurerm_resource_group.suffix.location
   resource_group_name = azurerm_resource_group.suffix.name
   tenant_id           = data.azurerm_client_config.current.tenant_id

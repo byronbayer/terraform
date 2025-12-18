@@ -30,10 +30,41 @@ module "storage_account_prefix" {
   tags        = {}
 }
 
+module "storage_account_prefix_logs" {
+  source                   = "./modules/storage-account"
+  naming_prefix            = local.naming_convention["prefix"]
+  purpose                  = "logs"
+  location                 = azurerm_resource_group.prefix.location
+  resource_group_name      = azurerm_resource_group.prefix.name
+  account_tier             = "Standard"
+  account_replication_type = "LRS"
+  subnet_id                = azurerm_subnet.private_endpoints.id
+  private_endpoints        = ["blob"]
+  private_dns_zone_ids = {
+    blob = azurerm_private_dns_zone.storage_blob.id
+  }
+  environment = var.environment
+  tags        = {}
+}
+
 module "keyvault_prefix" {
   source              = "./modules/keyvault"
   naming_prefix       = local.naming_convention["prefix"]
   purpose             = "gen"
+  location            = azurerm_resource_group.prefix.location
+  resource_group_name = azurerm_resource_group.prefix.name
+  tenant_id           = data.azurerm_client_config.current.tenant_id
+  subnet_id           = azurerm_subnet.private_endpoints.id
+  private_dns_zone_id = azurerm_private_dns_zone.keyvault.id
+  environment         = var.environment
+
+  tags = {}
+}
+
+module "keyvault_prefix_app" {
+  source              = "./modules/keyvault"
+  naming_prefix       = local.naming_convention["prefix"]
+  purpose             = "app"
   location            = azurerm_resource_group.prefix.location
   resource_group_name = azurerm_resource_group.prefix.name
   tenant_id           = data.azurerm_client_config.current.tenant_id
