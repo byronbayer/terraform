@@ -5,6 +5,7 @@ locals {
       var.org,
       var.environment,
       type,
+      var.instance,
       module.azure_location.short_name
     ]
   }

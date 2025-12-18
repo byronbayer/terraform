@@ -11,8 +11,8 @@ terraform {
 module "naming" {
   source  = "Azure/naming/azurerm"
   version = ">= 0.4.2"
-  prefix  = var.naming_prefix != null ? concat(var.naming_prefix, [var.instance]) : [var.instance]
-  suffix  = var.naming_suffix != null ? concat(var.naming_suffix, [var.instance]) : [var.instance]
+  prefix  = var.naming_prefix != null ? concat(var.naming_prefix, [var.purpose]) : [var.purpose]
+  suffix  = var.naming_suffix != null ? concat(var.naming_suffix, [var.purpose]) : [var.purpose]
 }
 
 # Naming module for storage account-related resources, using the storage account name as prefix

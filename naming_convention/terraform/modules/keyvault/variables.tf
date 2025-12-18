@@ -10,10 +10,10 @@ variable "naming_suffix" {
   default     = null
 }
 
-variable "instance" {
-  description = "Instance identifier for multiple deployments"
+variable "purpose" {
+  description = "Purpose identifier for the resource (e.g., secrets, certs, keys)"
   type        = string
-  default     = "01"
+  default     = "gen"
 }
 
 variable "location" {

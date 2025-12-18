@@ -11,6 +11,12 @@ variable "environment" {
   default     = "dev"
 }
 
+variable "instance" {
+  description = "Environment instance identifier (01, 02, etc.)"
+  type        = string
+  default     = "01"
+}
+
 variable "subscription_id" {
   description = "The Azure subscription ID"
   type        = string

@@ -12,7 +12,7 @@ resource "azurerm_resource_group" "prefix" {
 module "storage_account_prefix" {
   source                   = "./modules/storage-account"
   naming_prefix            = local.naming_convention["prefix"]
-  instance                 = "01"
+  purpose                  = "gen"
   location                 = azurerm_resource_group.prefix.location
   resource_group_name      = azurerm_resource_group.prefix.name
   account_tier             = "Standard"
@@ -33,7 +33,7 @@ module "storage_account_prefix" {
 module "keyvault_prefix" {
   source              = "./modules/keyvault"
   naming_prefix       = local.naming_convention["prefix"]
-  instance            = "01"
+  purpose             = "gen"
   location            = azurerm_resource_group.prefix.location
   resource_group_name = azurerm_resource_group.prefix.name
   tenant_id           = data.azurerm_client_config.current.tenant_id
