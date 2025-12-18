@@ -11,8 +11,8 @@ terraform {
 module "naming" {
   source  = "Azure/naming/azurerm"
   version = ">= 0.4.2"
-  prefix  = var.naming_prefix != null ? var.naming_prefix : []
-  suffix  = var.naming_suffix != null ? var.naming_suffix : []
+  prefix  = var.naming_prefix != null ? concat(var.naming_prefix, [var.instance]) : [var.instance]
+  suffix  = var.naming_suffix != null ? concat(var.naming_suffix, [var.instance]) : [var.instance]
 }
 
 # Second naming module for Key Vault-related resources, using the Key Vault name as prefix

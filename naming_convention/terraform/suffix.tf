@@ -16,6 +16,7 @@ module "storage_account_suffix" {
   source = "./modules/storage-account"
 
   naming_suffix            = local.naming_convention["suffix"]
+  instance                 = "01"
   location                 = azurerm_resource_group.suffix.location
   resource_group_name      = azurerm_resource_group.suffix.name
   account_tier             = "Standard"
@@ -37,6 +38,7 @@ module "keyvault_suffix" {
   source = "./modules/keyvault"
 
   naming_suffix       = local.naming_convention["suffix"]
+  instance            = "01"
   location            = azurerm_resource_group.suffix.location
   resource_group_name = azurerm_resource_group.suffix.name
   tenant_id           = data.azurerm_client_config.current.tenant_id

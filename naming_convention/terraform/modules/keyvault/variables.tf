@@ -10,6 +10,12 @@ variable "naming_suffix" {
   default     = null
 }
 
+variable "instance" {
+  description = "Instance identifier for multiple deployments"
+  type        = string
+  default     = "01"
+}
+
 variable "location" {
   description = "The Azure location for the Key Vault"
   type        = string
