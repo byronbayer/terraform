@@ -1,7 +1,7 @@
 module "naming_prefix" {
   source  = "Azure/naming/azurerm"
   version = ">= 0.4.2"
-  suffix  = local.naming_convention_prefix
+  prefix  = local.naming_convention["prefix"]
 }
 
 resource "azurerm_resource_group" "prefix" {
@@ -10,9 +10,8 @@ resource "azurerm_resource_group" "prefix" {
 }
 
 module "storage_account_prefix" {
-  source = "./modules/storage-account"
-
-  naming_suffix            = local.naming_convention_prefix
+  source                   = "./modules/storage-account"
+  naming_prefix            = local.naming_convention["prefix"]
   location                 = azurerm_resource_group.prefix.location
   resource_group_name      = azurerm_resource_group.prefix.name
   account_tier             = "Standard"
@@ -27,14 +26,12 @@ module "storage_account_prefix" {
     dfs   = azurerm_private_dns_zone.storage_dfs.id
   }
   environment = var.environment
-
-  tags = {}
+  tags        = {}
 }
 
 module "keyvault_prefix" {
-  source = "./modules/keyvault"
-
-  naming_suffix       = local.naming_convention_prefix
+  source              = "./modules/keyvault"
+  naming_prefix       = local.naming_convention["prefix"]
   location            = azurerm_resource_group.prefix.location
   resource_group_name = azurerm_resource_group.prefix.name
   tenant_id           = data.azurerm_client_config.current.tenant_id

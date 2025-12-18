@@ -1,23 +1,23 @@
 
 
 
-module "naming_postfix" {
+module "naming_suffix" {
   source  = "Azure/naming/azurerm"
   version = ">= 0.4.2"
-  prefix  = local.naming_convention_postfix
+  suffix  = local.naming_convention["suffix"]
 }
 
-resource "azurerm_resource_group" "postfix" {
-  name     = module.naming_postfix.resource_group.name
+resource "azurerm_resource_group" "suffix" {
+  name     = module.naming_suffix.resource_group.name
   location = module.azure_location.name
 }
 
-module "storage_account_postfix" {
+module "storage_account_suffix" {
   source = "./modules/storage-account"
 
-  naming_prefix            = local.naming_convention_postfix
-  location                 = azurerm_resource_group.postfix.location
-  resource_group_name      = azurerm_resource_group.postfix.name
+  naming_suffix            = local.naming_convention["suffix"]
+  location                 = azurerm_resource_group.suffix.location
+  resource_group_name      = azurerm_resource_group.suffix.name
   account_tier             = "Standard"
   account_replication_type = "LRS"
   subnet_id                = azurerm_subnet.private_endpoints.id
@@ -30,20 +30,18 @@ module "storage_account_postfix" {
     dfs   = azurerm_private_dns_zone.storage_dfs.id
   }
   environment = var.environment
-
-  tags = {}
+  tags        = {}
 }
 
-module "keyvault_postfix" {
+module "keyvault_suffix" {
   source = "./modules/keyvault"
 
-  naming_prefix       = local.naming_convention_postfix
-  location            = azurerm_resource_group.postfix.location
-  resource_group_name = azurerm_resource_group.postfix.name
+  naming_suffix       = local.naming_convention["suffix"]
+  location            = azurerm_resource_group.suffix.location
+  resource_group_name = azurerm_resource_group.suffix.name
   tenant_id           = data.azurerm_client_config.current.tenant_id
   subnet_id           = azurerm_subnet.private_endpoints.id
   private_dns_zone_id = azurerm_private_dns_zone.keyvault.id
   environment         = var.environment
-
-  tags = {}
+  tags                = {}
 }
