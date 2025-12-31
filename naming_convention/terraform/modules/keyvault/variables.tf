@@ -51,3 +51,9 @@ variable "tags" {
   type        = map(string)
   default     = {}
 }
+
+variable "purge_protection_enabled" {
+  description = "Whether purge protection is enabled for the Key Vault. When enabled, the Key Vault and its objects cannot be purged during the retention period."
+  type        = bool
+  default     = true
+}

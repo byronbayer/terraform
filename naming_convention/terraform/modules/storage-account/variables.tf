@@ -30,12 +30,22 @@ variable "account_tier" {
   description = "Defines the Tier to use for this storage account (Standard or Premium)"
   type        = string
   default     = "Standard"
+
+  validation {
+    condition     = contains(["Standard", "Premium"], var.account_tier)
+    error_message = "Account tier must be either 'Standard' or 'Premium'."
+  }
 }
 
 variable "account_replication_type" {
   description = "Defines the type of replication to use for this storage account"
   type        = string
   default     = "LRS"
+
+  validation {
+    condition     = contains(["LRS", "GRS", "RAGRS", "ZRS", "GZRS", "RAGZRS"], var.account_replication_type)
+    error_message = "Account replication type must be one of: LRS, GRS, RAGRS, ZRS, GZRS, RAGZRS."
+  }
 }
 
 variable "subnet_id" {

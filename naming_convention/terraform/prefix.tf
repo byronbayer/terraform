@@ -20,11 +20,11 @@ module "storage_account_prefix" {
   subnet_id                = azurerm_subnet.private_endpoints.id
   private_endpoints        = ["blob", "file", "table", "queue", "dfs"]
   private_dns_zone_ids = {
-    blob  = azurerm_private_dns_zone.storage_blob.id
-    file  = azurerm_private_dns_zone.storage_file.id
-    table = azurerm_private_dns_zone.storage_table.id
-    queue = azurerm_private_dns_zone.storage_queue.id
-    dfs   = azurerm_private_dns_zone.storage_dfs.id
+    blob  = azurerm_private_dns_zone.this["storage_blob"].id
+    file  = azurerm_private_dns_zone.this["storage_file"].id
+    table = azurerm_private_dns_zone.this["storage_table"].id
+    queue = azurerm_private_dns_zone.this["storage_queue"].id
+    dfs   = azurerm_private_dns_zone.this["storage_dfs"].id
   }
   environment = var.environment
   tags        = {}
@@ -41,22 +41,23 @@ module "storage_account_prefix_logs" {
   subnet_id                = azurerm_subnet.private_endpoints.id
   private_endpoints        = ["blob"]
   private_dns_zone_ids = {
-    blob = azurerm_private_dns_zone.storage_blob.id
+    blob = azurerm_private_dns_zone.this["storage_blob"].id
   }
   environment = var.environment
   tags        = {}
 }
 
 module "keyvault_prefix" {
-  source              = "./modules/keyvault"
-  naming_prefix       = local.naming_convention["prefix"]
-  purpose             = "gen"
-  location            = azurerm_resource_group.prefix.location
-  resource_group_name = azurerm_resource_group.prefix.name
-  tenant_id           = data.azurerm_client_config.current.tenant_id
-  subnet_id           = azurerm_subnet.private_endpoints.id
-  private_dns_zone_id = azurerm_private_dns_zone.keyvault.id
-  environment         = var.environment
+  source                   = "./modules/keyvault"
+  naming_prefix            = local.naming_convention["prefix"]
+  purpose                  = "gen"
+  location                 = azurerm_resource_group.prefix.location
+  resource_group_name      = azurerm_resource_group.prefix.name
+  tenant_id                = data.azurerm_client_config.current.tenant_id
+  subnet_id                = azurerm_subnet.private_endpoints.id
+  private_dns_zone_id      = azurerm_private_dns_zone.this["keyvault"].id
+  environment              = var.environment
+  purge_protection_enabled = false
 
   tags = {}
 }
@@ -69,7 +70,7 @@ module "keyvault_prefix_app" {
   resource_group_name = azurerm_resource_group.prefix.name
   tenant_id           = data.azurerm_client_config.current.tenant_id
   subnet_id           = azurerm_subnet.private_endpoints.id
-  private_dns_zone_id = azurerm_private_dns_zone.keyvault.id
+  private_dns_zone_id = azurerm_private_dns_zone.this["keyvault"].id
   environment         = var.environment
 
   tags = {}

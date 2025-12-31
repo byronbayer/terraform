@@ -24,12 +24,14 @@ module "naming_st" {
 }
 
 resource "azurerm_storage_account" "this" {
-  name                          = module.naming.storage_account.name
-  resource_group_name           = var.resource_group_name
-  location                      = var.location
-  account_tier                  = var.account_tier
-  account_replication_type      = var.account_replication_type
-  public_network_access_enabled = false
+  name                            = module.naming.storage_account.name
+  resource_group_name             = var.resource_group_name
+  location                        = var.location
+  account_tier                    = var.account_tier
+  account_replication_type        = var.account_replication_type
+  public_network_access_enabled   = false
+  min_tls_version                 = "TLS1_2"
+  allow_nested_items_to_be_public = false
 
   network_rules {
     default_action = "Deny"
@@ -39,105 +41,35 @@ resource "azurerm_storage_account" "this" {
   tags = var.tags
 }
 
-# Private Endpoint for Blob
-module "private_endpoint_blob" {
-  count = contains(var.private_endpoints, "blob") ? 1 : 0
+# Local map for private endpoint configurations
+locals {
+  endpoint_config = {
+    blob  = module.naming_st.storage_blob.name
+    file  = module.naming_st.storage_share.name
+    table = module.naming_st.storage_table.name
+    queue = module.naming_st.storage_queue.name
+    dfs   = module.naming_st.storage_data_lake_gen2_filesystem.name
+  }
 
-  source = "../private-endpoint"
-
-  naming_prefix                  = var.naming_prefix != null ? [module.naming_st.storage_blob.name] : []
-  naming_suffix                  = var.naming_suffix != null ? [module.naming_st.storage_blob.name] : []
-  location                       = var.location
-  resource_group_name            = var.resource_group_name
-  subnet_id                      = var.subnet_id
-  private_connection_resource_id = azurerm_storage_account.this.id
-  subresource_names              = ["blob"]
-  dns_zone_group_name            = "storage-blob-dns-zone-group"
-  dns_zone_ids                   = [var.private_dns_zone_ids["blob"]]
-
-  tags = merge(var.tags, {
-    environment = var.environment
-  })
+  # Filter to only include requested endpoints
+  active_endpoints = { for k, v in local.endpoint_config : k => v if contains(var.private_endpoints, k) }
 }
 
-# Private Endpoint for File
-module "private_endpoint_file" {
-  count = contains(var.private_endpoints, "file") ? 1 : 0
+# Private Endpoints using for_each
+module "private_endpoint" {
+  for_each = local.active_endpoints
 
   source = "../private-endpoint"
 
-  naming_prefix                  = var.naming_prefix != null ? [module.naming_st.storage_share.name] : []
-  naming_suffix                  = var.naming_suffix != null ? [module.naming_st.storage_share.name] : []
+  naming_prefix                  = var.naming_prefix != null ? [each.value] : []
+  naming_suffix                  = var.naming_suffix != null ? [each.value] : []
   location                       = var.location
   resource_group_name            = var.resource_group_name
   subnet_id                      = var.subnet_id
   private_connection_resource_id = azurerm_storage_account.this.id
-  subresource_names              = ["file"]
-  dns_zone_group_name            = "storage-file-dns-zone-group"
-  dns_zone_ids                   = [var.private_dns_zone_ids["file"]]
-
-  tags = merge(var.tags, {
-    environment = var.environment
-  })
-}
-
-# Private Endpoint for Table
-module "private_endpoint_table" {
-  count = contains(var.private_endpoints, "table") ? 1 : 0
-
-  source = "../private-endpoint"
-
-  naming_prefix                  = var.naming_prefix != null ? [module.naming_st.storage_table.name] : []
-  naming_suffix                  = var.naming_suffix != null ? [module.naming_st.storage_table.name] : []
-  location                       = var.location
-  resource_group_name            = var.resource_group_name
-  subnet_id                      = var.subnet_id
-  private_connection_resource_id = azurerm_storage_account.this.id
-  subresource_names              = ["table"]
-  dns_zone_group_name            = "storage-table-dns-zone-group"
-  dns_zone_ids                   = [var.private_dns_zone_ids["table"]]
-
-  tags = merge(var.tags, {
-    environment = var.environment
-  })
-}
-
-# Private Endpoint for Queue
-module "private_endpoint_queue" {
-  count = contains(var.private_endpoints, "queue") ? 1 : 0
-
-  source = "../private-endpoint"
-
-  naming_prefix                  = var.naming_prefix != null ? [module.naming_st.storage_queue.name] : []
-  naming_suffix                  = var.naming_suffix != null ? [module.naming_st.storage_queue.name] : []
-  location                       = var.location
-  resource_group_name            = var.resource_group_name
-  subnet_id                      = var.subnet_id
-  private_connection_resource_id = azurerm_storage_account.this.id
-  subresource_names              = ["queue"]
-  dns_zone_group_name            = "storage-queue-dns-zone-group"
-  dns_zone_ids                   = [var.private_dns_zone_ids["queue"]]
-
-  tags = merge(var.tags, {
-    environment = var.environment
-  })
-}
-
-# Private Endpoint for DFS (Data Lake Gen2)
-module "private_endpoint_dfs" {
-  count = contains(var.private_endpoints, "dfs") ? 1 : 0
-
-  source = "../private-endpoint"
-
-  naming_prefix                  = var.naming_prefix != null ? [module.naming_st.storage_data_lake_gen2_filesystem.name] : []
-  naming_suffix                  = var.naming_suffix != null ? [module.naming_st.storage_data_lake_gen2_filesystem.name] : []
-  location                       = var.location
-  resource_group_name            = var.resource_group_name
-  subnet_id                      = var.subnet_id
-  private_connection_resource_id = azurerm_storage_account.this.id
-  subresource_names              = ["dfs"]
-  dns_zone_group_name            = "storage-dfs-dns-zone-group"
-  dns_zone_ids                   = [var.private_dns_zone_ids["dfs"]]
+  subresource_names              = [each.key]
+  dns_zone_group_name            = "storage-${each.key}-dns-zone-group"
+  dns_zone_ids                   = [var.private_dns_zone_ids[each.key]]
 
   tags = merge(var.tags, {
     environment = var.environment

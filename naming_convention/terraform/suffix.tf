@@ -1,81 +1,81 @@
 
 
 
-module "naming_suffix" {
-  source  = "Azure/naming/azurerm"
-  version = ">= 0.4.2"
-  suffix  = local.naming_convention["suffix"]
-}
+# module "naming_suffix" {
+#   source  = "Azure/naming/azurerm"
+#   version = ">= 0.4.2"
+#   suffix  = local.naming_convention["suffix"]
+# }
 
-resource "azurerm_resource_group" "suffix" {
-  name     = module.naming_suffix.resource_group.name
-  location = module.azure_location.name
-}
+# resource "azurerm_resource_group" "suffix" {
+#   name     = module.naming_suffix.resource_group.name
+#   location = module.azure_location.name
+# }
 
-module "storage_account_suffix" {
-  source = "./modules/storage-account"
+# module "storage_account_suffix" {
+#   source = "./modules/storage-account"
 
-  naming_suffix            = local.naming_convention["suffix"]
-  purpose                  = "gen"
-  location                 = azurerm_resource_group.suffix.location
-  resource_group_name      = azurerm_resource_group.suffix.name
-  account_tier             = "Standard"
-  account_replication_type = "LRS"
-  subnet_id                = azurerm_subnet.private_endpoints.id
-  private_endpoints        = ["blob", "file", "table", "queue", "dfs"]
-  private_dns_zone_ids = {
-    blob  = azurerm_private_dns_zone.storage_blob.id
-    file  = azurerm_private_dns_zone.storage_file.id
-    table = azurerm_private_dns_zone.storage_table.id
-    queue = azurerm_private_dns_zone.storage_queue.id
-    dfs   = azurerm_private_dns_zone.storage_dfs.id
-  }
-  environment = var.environment
-  tags        = {}
-}
+#   naming_suffix            = local.naming_convention["suffix"]
+#   purpose                  = "gen"
+#   location                 = azurerm_resource_group.suffix.location
+#   resource_group_name      = azurerm_resource_group.suffix.name
+#   account_tier             = "Standard"
+#   account_replication_type = "LRS"
+#   subnet_id                = azurerm_subnet.private_endpoints.id
+#   private_endpoints        = ["blob", "file", "table", "queue", "dfs"]
+#   private_dns_zone_ids = {
+#     blob  = azurerm_private_dns_zone.this["storage_blob"].id
+#     file  = azurerm_private_dns_zone.this["storage_file"].id
+#     table = azurerm_private_dns_zone.this["storage_table"].id
+#     queue = azurerm_private_dns_zone.this["storage_queue"].id
+#     dfs   = azurerm_private_dns_zone.this["storage_dfs"].id
+#   }
+#   environment = var.environment
+#   tags        = {}
+# }
 
-module "storage_account_suffix_logs" {
-  source = "./modules/storage-account"
+# module "storage_account_suffix_logs" {
+#   source = "./modules/storage-account"
 
-  naming_suffix            = local.naming_convention["suffix"]
-  purpose                  = "logs"
-  location                 = azurerm_resource_group.suffix.location
-  resource_group_name      = azurerm_resource_group.suffix.name
-  account_tier             = "Standard"
-  account_replication_type = "LRS"
-  subnet_id                = azurerm_subnet.private_endpoints.id
-  private_endpoints        = ["blob"]
-  private_dns_zone_ids = {
-    blob = azurerm_private_dns_zone.storage_blob.id
-  }
-  environment = var.environment
-  tags        = {}
-}
+#   naming_suffix            = local.naming_convention["suffix"]
+#   purpose                  = "logs"
+#   location                 = azurerm_resource_group.suffix.location
+#   resource_group_name      = azurerm_resource_group.suffix.name
+#   account_tier             = "Standard"
+#   account_replication_type = "LRS"
+#   subnet_id                = azurerm_subnet.private_endpoints.id
+#   private_endpoints        = ["blob"]
+#   private_dns_zone_ids = {
+#     blob = azurerm_private_dns_zone.this["storage_blob"].id
+#   }
+#   environment = var.environment
+#   tags        = {}
+# }
 
-module "keyvault_suffix" {
-  source = "./modules/keyvault"
+# module "keyvault_suffix" {
+#   source = "./modules/keyvault"
 
-  naming_suffix       = local.naming_convention["suffix"]
-  purpose             = "gen"
-  location            = azurerm_resource_group.suffix.location
-  resource_group_name = azurerm_resource_group.suffix.name
-  tenant_id           = data.azurerm_client_config.current.tenant_id
-  subnet_id           = azurerm_subnet.private_endpoints.id
-  private_dns_zone_id = azurerm_private_dns_zone.keyvault.id
-  environment         = var.environment
-  tags                = {}
-}
+#   naming_suffix       = local.naming_convention["suffix"]
+#   purpose             = "gen"
+#   location            = azurerm_resource_group.suffix.location
+#   resource_group_name = azurerm_resource_group.suffix.name
+#   tenant_id           = data.azurerm_client_config.current.tenant_id
+#   subnet_id           = azurerm_subnet.private_endpoints.id
+#   private_dns_zone_id = azurerm_private_dns_zone.this["keyvault"].id
+#   environment         = var.environment
+#   tags                = {}
+# }
 
-module "keyvault_suffix_app" {
-  source = "./modules/keyvault"
+# module "keyvault_suffix_app" {
+#   source = "./modules/keyvault"
 
-  naming_suffix       = local.naming_convention["suffix"]
-  purpose             = "app"
-  location            = azurerm_resource_group.suffix.location
-  resource_group_name = azurerm_resource_group.suffix.name
-  tenant_id           = data.azurerm_client_config.current.tenant_id
-  subnet_id           = azurerm_subnet.private_endpoints.id
-  private_dns_zone_id = azurerm_private_dns_zone.keyvault.id
-  environment         = var.environment
-  tags                = {}
-}
+#   naming_suffix       = local.naming_convention["suffix"]
+#   purpose             = "app"
+#   location            = azurerm_resource_group.suffix.location
+#   resource_group_name = azurerm_resource_group.suffix.name
+#   tenant_id           = data.azurerm_client_config.current.tenant_id
+#   subnet_id           = azurerm_subnet.private_endpoints.id
+#   private_dns_zone_id = azurerm_private_dns_zone.this["keyvault"].id
+#   environment         = var.environment
+#   tags                = {}
+# }
