@@ -1,7 +1,7 @@
 module "naming_prefix" {
   source  = "Azure/naming/azurerm"
   version = ">= 0.4.2"
-  suffix  = local.naming_convention_prefix
+  suffix  = local.naming_convention
 }
 
 resource "azurerm_resource_group" "prefix" {
@@ -10,9 +10,9 @@ resource "azurerm_resource_group" "prefix" {
 }
 
 module "storage_account_prefix" {
-  source = "./modules/storage-account"
+  source = "git::https://github.com/byronbayer/terraform-modules.git//modules/azure/storage-account?ref=jf/initial-create"
 
-  naming_suffix            = local.naming_convention_prefix
+  naming_suffix            = local.naming_convention
   location                 = azurerm_resource_group.prefix.location
   resource_group_name      = azurerm_resource_group.prefix.name
   account_tier             = "Standard"
@@ -32,9 +32,9 @@ module "storage_account_prefix" {
 }
 
 module "keyvault_prefix" {
-  source = "./modules/keyvault"
+  source = "git::https://github.com/byronbayer/terraform-modules.git//modules/azure/keyvault?ref=jf/initial-create"
 
-  naming_suffix       = local.naming_convention_prefix
+  naming_suffix       = local.naming_convention
   location            = azurerm_resource_group.prefix.location
   resource_group_name = azurerm_resource_group.prefix.name
   tenant_id           = data.azurerm_client_config.current.tenant_id

@@ -1,7 +1,7 @@
 module "naming_dns" {
   source  = "Azure/naming/azurerm"
   version = ">= 0.4.2"
-  prefix  = [var.org, "prd", "dns", module.azure_location.short_name]
+  prefix  = [var.org, var.environment, "dns", module.azure_location.short_name]
 }
 # Resource Group for DNS
 resource "azurerm_resource_group" "dns" {
@@ -17,7 +17,7 @@ resource "azurerm_private_dns_zone" "keyvault" {
 
 # Link Private DNS Zone to Virtual Network
 resource "azurerm_private_dns_zone_virtual_network_link" "keyvault" {
-  name                  = "keyvault-dns-link"
+  name                  = "${local.dns_link_name_prefix}-kv-dns-link"
   resource_group_name   = azurerm_resource_group.dns.name
   private_dns_zone_name = azurerm_private_dns_zone.keyvault.name
   virtual_network_id    = azurerm_virtual_network.example.id
@@ -32,7 +32,7 @@ resource "azurerm_private_dns_zone" "storage_blob" {
 
 # Link Private DNS Zone to Virtual Network
 resource "azurerm_private_dns_zone_virtual_network_link" "storage_blob" {
-  name                  = "storage-blob-dns-link"
+  name                  = "${local.dns_link_name_prefix}-blob-dns-link"
   resource_group_name   = azurerm_resource_group.dns.name
   private_dns_zone_name = azurerm_private_dns_zone.storage_blob.name
   virtual_network_id    = azurerm_virtual_network.example.id
@@ -47,7 +47,7 @@ resource "azurerm_private_dns_zone" "storage_file" {
 
 # Link Private DNS Zone to Virtual Network
 resource "azurerm_private_dns_zone_virtual_network_link" "storage_file" {
-  name                  = "storage-file-dns-link"
+  name                  = "${local.dns_link_name_prefix}-file-dns-link"
   resource_group_name   = azurerm_resource_group.dns.name
   private_dns_zone_name = azurerm_private_dns_zone.storage_file.name
   virtual_network_id    = azurerm_virtual_network.example.id
@@ -62,7 +62,7 @@ resource "azurerm_private_dns_zone" "storage_table" {
 
 # Link Private DNS Zone to Virtual Network
 resource "azurerm_private_dns_zone_virtual_network_link" "storage_table" {
-  name                  = "storage-table-dns-link"
+  name                  = "${local.dns_link_name_prefix}-table-dns-link"
   resource_group_name   = azurerm_resource_group.dns.name
   private_dns_zone_name = azurerm_private_dns_zone.storage_table.name
   virtual_network_id    = azurerm_virtual_network.example.id
@@ -77,7 +77,7 @@ resource "azurerm_private_dns_zone" "storage_queue" {
 
 # Link Private DNS Zone to Virtual Network
 resource "azurerm_private_dns_zone_virtual_network_link" "storage_queue" {
-  name                  = "storage-queue-dns-link"
+  name                  = "${local.dns_link_name_prefix}-queue-dns-link"
   resource_group_name   = azurerm_resource_group.dns.name
   private_dns_zone_name = azurerm_private_dns_zone.storage_queue.name
   virtual_network_id    = azurerm_virtual_network.example.id
@@ -92,7 +92,7 @@ resource "azurerm_private_dns_zone" "storage_dfs" {
 
 # Link Private DNS Zone to Virtual Network
 resource "azurerm_private_dns_zone_virtual_network_link" "storage_dfs" {
-  name                  = "storage-dfs-dns-link"
+  name                  = "${local.dns_link_name_prefix}-dfs-dns-link"
   resource_group_name   = azurerm_resource_group.dns.name
   private_dns_zone_name = azurerm_private_dns_zone.storage_dfs.name
   virtual_network_id    = azurerm_virtual_network.example.id

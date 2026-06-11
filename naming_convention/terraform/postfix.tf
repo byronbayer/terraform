@@ -1,10 +1,7 @@
-
-
-
 module "naming_postfix" {
   source  = "Azure/naming/azurerm"
   version = ">= 0.4.2"
-  prefix  = local.naming_convention_postfix
+  prefix  = local.naming_convention
 }
 
 resource "azurerm_resource_group" "postfix" {
@@ -13,9 +10,9 @@ resource "azurerm_resource_group" "postfix" {
 }
 
 module "storage_account_postfix" {
-  source = "./modules/storage-account"
+  source = "git::https://github.com/byronbayer/terraform-modules.git//modules/azure/storage-account?ref=jf/initial-create"
 
-  naming_prefix            = local.naming_convention_postfix
+  naming_prefix            = local.naming_convention
   location                 = azurerm_resource_group.postfix.location
   resource_group_name      = azurerm_resource_group.postfix.name
   account_tier             = "Standard"
@@ -35,9 +32,9 @@ module "storage_account_postfix" {
 }
 
 module "keyvault_postfix" {
-  source = "./modules/keyvault"
+  source = "git::https://github.com/byronbayer/terraform-modules.git//modules/azure/keyvault?ref=jf/initial-create"
 
-  naming_prefix       = local.naming_convention_postfix
+  naming_prefix       = local.naming_convention
   location            = azurerm_resource_group.postfix.location
   resource_group_name = azurerm_resource_group.postfix.name
   tenant_id           = data.azurerm_client_config.current.tenant_id
