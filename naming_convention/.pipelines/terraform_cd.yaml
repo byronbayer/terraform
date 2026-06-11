@@ -11,10 +11,10 @@ parameters:
   - name: environments
     type: object
     default:
-      - environmentName: "dev"        
-      - environmentName: "tst"      
-      - environmentName: "stg"        
-      - environmentName: "prd"        
+      - environmentName: "dev"
+      - environmentName: "tst"
+      - environmentName: "stg"
+      - environmentName: "prd"
         
   - name: applicationName
     type: string
