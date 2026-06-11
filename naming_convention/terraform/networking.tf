@@ -14,13 +14,13 @@ resource "azurerm_virtual_network" "example" {
   name                = module.naming_networking.virtual_network.name
   location            = azurerm_resource_group.networking.location
   resource_group_name = azurerm_resource_group.networking.name
-  address_space       = ["10.0.0.0/16"]
+  address_space       = var.vnet_address_space
 }
 
 # Subnet for private endpoints
 resource "azurerm_subnet" "private_endpoints" {
-  name                 = "snet-private-endpoints"
+  name                 = module.naming_networking.subnet.name
   resource_group_name  = azurerm_resource_group.networking.name
   virtual_network_name = azurerm_virtual_network.example.name
-  address_prefixes     = ["10.0.1.0/24"]
+  address_prefixes     = var.private_endpoint_subnet_prefix
 }
