@@ -1,0 +1,30 @@
+parameters:
+  - name: environments
+    type: object
+    default:
+      - environmentName: "dev"
+        subscriptionEnvironment: "dev"
+
+  - name: applicationName
+    type: string
+    default: "naming"
+
+trigger: none
+
+resources:
+  repositories:
+    - repository: pipeline-templates
+      type: github
+      name: templates
+    - repository: terraform-modules
+      type: github
+      name: terraform
+
+lockBehavior: sequential
+
+extends:
+  template: terraform/stages/ci.yaml@templates
+  parameters:
+    environments: ${{ parameters.environments }}
+    applicationName: ${{ parameters.applicationName }}
+    planWithElevatedSC: true

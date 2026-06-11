@@ -1,0 +1,54 @@
+---
+parameters:
+  - name: terraform_action
+    displayName: Terraform Action to perform
+    type: string
+    default: "apply"
+    values:
+      - "apply"
+      - "destroy"
+
+  - name: environments
+    type: object
+    default:
+      - environmentName: "dev"        
+      - environmentName: "tst"      
+      - environmentName: "stg"        
+      - environmentName: "prd"        
+        
+  - name: applicationName
+    type: string
+    default: "naming"
+
+  - name: terraformLockID
+    type: string
+    default: "none"
+
+trigger:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - terraform/*
+
+resources:
+  repositories:
+    - repository: templates
+      type: github
+      name: pipeline-templates
+    - repository: terraform
+      type: github
+      name: terraform-modules
+
+lockBehavior: sequential
+
+extends:
+  template: terraform/stages/cd.yaml@templates
+  parameters:
+    terraform_action: ${{ parameters.terraform_action }}
+    environments: ${{ parameters.environments }}
+    applicationName: ${{ parameters.applicationName }}
+    requiredAgent: "linux"
+    loadCentralVariables: false
+    terraformLockID: ${{ parameters.terraformLockID }}
