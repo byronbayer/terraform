@@ -11,10 +11,13 @@ parameters:
   - name: environments
     type: object
     default:
-      - environmentName: "dev"
+      - environmentName: "dev"        
       - environmentName: "tst"
+        dependsOn: "dev"
       - environmentName: "stg"
+        dependsOn: "tst"
       - environmentName: "prd"
+        dependsOn: "stg"
         
   - name: applicationName
     type: string
@@ -51,4 +54,5 @@ extends:
     applicationName: ${{ parameters.applicationName }}
     requiredAgent: "linux"
     loadCentralVariables: false
+    runInitialise: false
     terraformLockID: ${{ parameters.terraformLockID }}
